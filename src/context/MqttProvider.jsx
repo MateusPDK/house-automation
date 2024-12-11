@@ -21,7 +21,6 @@ export const MqttProvider = ({ children }) => {
 
     // Quando uma mensagem for recebida
     mqttClient.on('message', (topic, message) => {
-      console.log(`Mensagem recebida: ${topic} - ${message.toString()}`);
       const [_, deviceId, action] = topic.split('/');
       const payload = JSON.parse(message.toString());
 
