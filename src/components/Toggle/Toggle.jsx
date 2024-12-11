@@ -1,17 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './toggle.scss';
 
-const ToggleSwitch = () => {
-  const [isOn, setIsOn] = useState(false);
-
-  const handleToggle = () => {
-    setIsOn(!isOn);
-  };
+const ToggleSwitch = ({ state, onclick }) => {
+  const isOn = state === "on" ? true : false;
 
   return (
-    <div className={`toggle-switch ${isOn ? 'on' : 'off'}`} onClick={handleToggle}>
+    <button
+      className={`toggle-switch ${isOn ? 'on' : 'off'}`}
+      onClick={onclick}
+    >
       <div className="toggle-ball"></div>
-    </div>
+    </button>
   );
 };
 

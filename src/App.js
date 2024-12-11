@@ -4,17 +4,21 @@ import { useMqtt } from './hooks/useMqtt';
 import Device from "./components/Device/Device";
 
 function App() {
-  const { devices } = useMqtt();
+  const { devices, toggleDeviceState } = useMqtt();
 
+  const handleToggle = (device) => {
+    const newState = device.state === 'on' ? 'off' : 'on';
+    toggleDeviceState(device.id, newState);
+  };
+  
   function renderDevices() {
-    console.log(devices);
-
     return devices.length === 0 ? (
       <p>Nenhum dispositivo encontrado.</p>
     ) : devices.map((device) => (
       <Device
         key={device.id}
-        {...device}
+        device={device}
+        onClick={handleToggle}
       />
     ))
   };

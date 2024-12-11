@@ -1,14 +1,26 @@
 import React from "react";
 import Toggle from "../Toggle/Toggle";
+import Icon from "../Icon/Icon";
 import './device.scss';
 
-const Device = ({ id, name, state }) => {
+const Device = ({ device, onClick }) => {
+  const { name, id, state, type } = device;
 
   return (
-    <div className="device-item">
+    <div id={id} className="device-item">
       <h2>{name}</h2>
 
-      <Toggle />
+      <div className="toggle-wrapper">
+        <Icon
+          isOn={state === "on" ? true : false}
+          name={type}
+        />
+
+        <Toggle
+          state={state}
+          onclick={() => onClick(device)}
+        />
+      </div>
     </div>
   );
 };

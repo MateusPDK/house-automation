@@ -8,12 +8,12 @@ const baseTopic = 'home/devices';
 const authenticationCode = '1234'; // Código que o app espera para autenticar os dispositivos
 
 // Caminho absoluto do arquivo JSON
-const devicesFilePath = path.resolve(__dirname, 'devices.json');
+const filePath = path.join(__dirname, 'devices.json');
 
 // Função para ler dispositivos do arquivo JSON
 const loadDevicesFromFile = () => {
   try {
-    const data = fs.readFileSync(devicesFilePath, 'utf-8');
+    const data = fs.readFileSync(filePath, 'utf-8');
     return JSON.parse(data);
   } catch (error) {
     console.error('Erro ao ler o arquivo devices.json:', error.message);
@@ -24,15 +24,12 @@ const loadDevicesFromFile = () => {
 // Função para salvar dispositivos no arquivo JSON
 const saveDevicesToFile = (devices) => {
   try {
-    fs.writeFileSync(devicesFilePath, JSON.stringify(devices, null, 2), 'utf-8');
+    fs.writeFileSync(filePath, JSON.stringify(devices, null, 2), 'utf-8');
     console.log('Estado dos dispositivos salvo em devices.json.');
   } catch (error) {
     console.error('Erro ao salvar o arquivo devices.json:', error.message);
   }
 };
-
-// Carrega dispositivos simulados
-let devices = loadDevicesFromFile();
 
 // Conexão ao broker MQTT
 const client = mqtt.connect(brokerUrl);
@@ -42,6 +39,7 @@ client.on('connect', () => {
 
   // Função para enviar mensagens de descoberta
   const sendDiscoveryMessages = () => {
+    const devices = loadDevicesFromFile(); // Carregar dispositivos
     devices.forEach((device) => {
       client.publish(
         `${baseTopic}/discovery`,
@@ -49,6 +47,8 @@ client.on('connect', () => {
           id: device.id,
           name: device.name,
           authCode: authenticationCode,
+          type: device.type,
+          state: device.state,
         })
       );
     });
@@ -58,32 +58,49 @@ client.on('connect', () => {
   // Envia mensagens de descoberta ao conectar
   sendDiscoveryMessages();
 
-  // Reenvia as mensagens de descoberta a cada 30 segundos
-  setInterval(sendDiscoveryMessages, 30000);
+  // Reenvia as mensagens de descoberta a cada 5 segundos
+  setInterval(sendDiscoveryMessages, 5000);
 
   // Subscreve a tópicos para controle
   client.subscribe(`${baseTopic}/+/set`);
 });
 
 client.on('message', (topic, message) => {
-  const [_, deviceId, action] = topic.split('/'); // Exemplo: home/devices/lampada_1/set
-  const payload = JSON.parse(message.toString());
+  console.log('Mensagem recebida:', topic, message.toString()); // Log da mensagem
 
-  // Localiza o dispositivo correspondente
-  const device = devices.find((d) => d.id === deviceId);
+  // Separar o tópico
+  const topicParts = topic.split('/');
+  
+  // Extraímos o deviceId e o action (última parte do tópico)
+  const deviceId = topicParts[2];  // 'lampada_1'
+  const action = topicParts[3];    // 'set'
 
-  if (device && action === 'set') {
-    // Atualiza o estado do dispositivo
-    device.state = payload.state;
-    console.log(`Estado de ${device.name} alterado para ${device.state}`);
+  if (action === 'set') {
+    // Carregar dispositivos do arquivo JSON
+    let devices = loadDevicesFromFile();
+    console.log('Dispositivos carregados:', devices);
+    
+    // Encontrar o dispositivo que precisa ser atualizado
+    const deviceIndex = devices.findIndex((d) => d.id === deviceId);
+    console.log(`Dispositivo com ID ${deviceId} encontrado no índice: ${deviceIndex}`);
 
-    // Salva o estado atualizado no arquivo JSON
-    saveDevicesToFile(devices);
+    if (deviceIndex !== -1) {
+      // Atualiza o estado do dispositivo
+      const newState = JSON.parse(message.toString()).state;
+      devices[deviceIndex].state = newState;
+      console.log(`Estado de ${devices[deviceIndex].name} alterado para ${devices[deviceIndex].state}`);
 
-    // Publica o novo estado no tópico de status
-    client.publish(
-      `${baseTopic}/${deviceId}/status`,
-      JSON.stringify({ state: device.state })
-    );
+      // Salva as mudanças no arquivo JSON
+      saveDevicesToFile(devices);
+
+      // Publica o novo estado no tópico de status
+      client.publish(
+        `${baseTopic}/${deviceId}/status`,
+        JSON.stringify({ state: devices[deviceIndex].state })
+      );
+      console.log(`Novo estado publicado para ${deviceId}: ${devices[deviceIndex].state}`);
+    } else {
+      console.log(`Dispositivo com ID ${deviceId} não encontrado.`);
+    }
   }
 });

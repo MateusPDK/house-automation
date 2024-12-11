@@ -2,12 +2,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-grow: 1;
   border: 2px solid black;
   border-radius: 1rem;
   padding: 1rem;
   padding-left: 2rem;
 
-  width: calc(100%/3);
+  flex: 0 0 28%;
   text-align: left;
+
+  .toggle-wrapper {
+    width: 24%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
 }
