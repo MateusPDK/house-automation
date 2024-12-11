@@ -9,7 +9,7 @@
     "id": "lampada_2",
     "name": "Lâmpada 2",
     "type": "lamp",
-    "state": "on"
+    "state": "off"
   },
   {
     "id": "lampada_3",
@@ -21,35 +21,17 @@
     "id": "lampada_4",
     "name": "Lâmpada 2",
     "type": "lamp",
-    "state": "on"
-  },
-  {
-    "id": "lampada_5",
-    "name": "Lâmpada 1",
-    "type": "lamp",
     "state": "off"
-  },
-  {
-    "id": "lampada_6",
-    "name": "Lâmpada 2",
-    "type": "lamp",
-    "state": "on"
-  },
-  {
-    "id": "lampada_7",
-    "name": "Lâmpada 1",
-    "type": "lamp",
-    "state": "off"
-  },
-  {
-    "id": "lampada_8",
-    "name": "Lâmpada 2",
-    "type": "lamp",
-    "state": "on"
   },
   {
     "id": "tv_1",
     "name": "TV Sala",
+    "type": "tv",
+    "state": "on"
+  },
+  {
+    "id": "tv_2",
+    "name": "TV Quarto",
     "type": "tv",
     "state": "on"
   }

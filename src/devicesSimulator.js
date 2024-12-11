@@ -78,7 +78,7 @@ client.on('message', (topic, message) => {
   if (action === 'set') {
     // Carregar dispositivos do arquivo JSON
     let devices = loadDevicesFromFile();
-    console.log('Dispositivos carregados:', devices);
+    // console.log('Dispositivos carregados:', devices);
     
     // Encontrar o dispositivo que precisa ser atualizado
     const deviceIndex = devices.findIndex((d) => d.id === deviceId);
