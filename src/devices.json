@@ -1,0 +1,12 @@
+[
+  {
+    "id": "lampada_1",
+    "name": "Lâmpada Sala",
+    "state": "off"
+  },
+  {
+    "id": "lampada_2",
+    "name": "Lâmpada Cozinha",
+    "state": "off"
+  }
+]

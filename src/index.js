@@ -1,13 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { MqttProvider } from './context/MqttProvider';
+import './style/App.scss';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <MqttProvider>
+      <App />
+    </MqttProvider>
   </React.StrictMode>
 );
 
